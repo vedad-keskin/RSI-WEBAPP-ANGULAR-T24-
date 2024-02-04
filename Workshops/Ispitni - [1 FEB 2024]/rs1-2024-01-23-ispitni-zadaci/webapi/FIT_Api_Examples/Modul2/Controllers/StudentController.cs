@@ -43,6 +43,8 @@ namespace FIT_Api_Examples.Modul2.Controllers
         [Route("/DodajStudent")]
         public ActionResult DodajStudent([FromBody] DodajStudentVM x)
         {
+            if (!HttpContext.GetLoginInfo().isLogiran)
+                return BadRequest("nije logiran");
 
             Student novi;
 
@@ -72,9 +74,11 @@ namespace FIT_Api_Examples.Modul2.Controllers
         [Route("/ObrisiStudent")]
         public ActionResult ObrisiStudent([FromBody] int studentid)
         {
+            if (!HttpContext.GetLoginInfo().isLogiran)
+                return BadRequest("nije logiran");
 
-            
-             var student = _dbContext.Student.Find(studentid);
+
+            var student = _dbContext.Student.Find(studentid);
 
             _dbContext.Student.Remove(student);
 
@@ -91,7 +95,8 @@ namespace FIT_Api_Examples.Modul2.Controllers
         [Route("/GetStudent")]
         public ActionResult<Student> GetStudent([FromQuery] int studentid)
         {
-
+            if (!HttpContext.GetLoginInfo().isLogiran)
+                return BadRequest("nije logiran");
 
             var student = _dbContext.Student.Find(studentid);
 
