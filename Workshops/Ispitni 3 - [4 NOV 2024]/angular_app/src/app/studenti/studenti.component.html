@@ -1,0 +1,165 @@
+<p>studenti works!</p>
+
+<div>
+  <input [(ngModel)] = "filter_datumOd" type="checkbox"> Filter by <span style="font-weight: bold">Datum od</span> <br>
+  <input [(ngModel)]="datumOd" type="date" [disabled]="!filter_datumOd" ><br>
+  <hr>
+
+  <input [(ngModel)] = "filter_datumDo" type="checkbox"> Filter by <span style="font-weight: bold">Datum do</span> <br>
+  <input [(ngModel)]="datumDo" type="date" [disabled]="!filter_datumDo" ><br>
+
+  </div>
+  <hr>
+
+
+
+<table class="table table-warning">
+  <tr>
+    <th>ID</th>
+    <th>Ime</th>
+    <th>Prezime</th>
+    <th>Broj indeksa</th>
+    <th>Drzava rođenja</th>
+    <th>Opstina rođenja</th>
+    <th>Datum rodjenja</th>
+    <th>Akcija</th>
+  </tr>
+  <tbody>
+  <tr *ngFor="let s of FiltirirajStudente()" [ngClass]="{'obrisano' : s.obrisan}">
+    <td>{{s.id}}</td>
+    <td>{{s.ime}}</td>
+    <td>{{s.prezime}}</td>
+    <td>{{s.broj_indeksa}}</td>
+    <td>{{s.opstina_rodjenja!=null?s.opstina_rodjenja.drzava.naziv:""}}</td>
+    <td>{{s.opstina_rodjenja!=null?s.opstina_rodjenja.description:""}}</td>
+    <td>{{s.datum_rodjenja}}</td>
+    <td>
+      <button (click)="ObrisiStudenta(s.id)">Obrisi</button>
+      <button (click)="edit_student = s">Uredi</button>
+      <button routerLink="/student-maticnaknjiga/{{s.id}}">Maticna knjiga</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<button (click)="NoviStudent()" class="form-label">Novi student</button>
+
+
+
+<!-- MODAL ZA DODAVANJE STUDENTA --->
+
+<div *ngIf="novi_student" class="modal fade show" id="exampleModalLive" tabindex="-1" aria-labelledby="exampleModalLiveLabel" aria-modal="true" role="dialog" style="display: block;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLiveLabel">Dodaj student </h5>
+        <button type="button" class="btn-close" (click)="novi_student = null" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+
+
+        <div class="mb-3">
+          <label class="form-label">Ime studenta</label>
+          <input class="form-control" [(ngModel)]="novi_student.ime" placeholder="Ime studenta">
+        </div>
+
+
+        <div class="mb-3">
+          <label class="form-label">Prezime studenta</label>
+          <input class="form-control" [(ngModel)]="novi_student.prezime" placeholder="Prezime studenta"/>
+        </div>
+
+
+        <div class="mb-3">
+          <label class="form-label">Broj indeksa</label>
+          <input class="form-control" [(ngModel)]="novi_student.broj_indeksa" placeholder="Broj indeksa"/>
+        </div>
+
+
+        <div class="mb-3">
+          <label class="form-label">Datum rodjenja</label>
+          <input class="form-control" type="date" [(ngModel)]="novi_student.datum_rodjenja" placeholder="Datum rodjenja">
+        </div>
+
+
+        <div class="mb-3">
+          <label class="form-label">Opstina rodjenja</label>
+          <select class="form-control" [(ngModel)]="novi_student.opstina_rodjenja_id">
+             <option *ngFor="let x of opstine" [value]="x.id" >{{x.opis}}</option>
+          </select>
+        </div>
+
+
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="novi_student = null" >Close</button>
+        <button type="button" class="btn btn-primary" (click)="SpasiStudent()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- MODAL ZA EDIT STUDENTA --->
+
+<div *ngIf="edit_student" class="modal fade show" tabindex="-1" aria-labelledby="exampleModalLiveLabel" aria-modal="true" role="dialog" style="display: block;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" >Edit student </h5>
+        <button type="button" class="btn-close" (click)="edit_student = null" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+
+
+        <div class="mb-3">
+          <label class="form-label">Ime studenta</label>
+          <input class="form-control" [(ngModel)]="edit_student.ime" placeholder="Ime studenta">
+        </div>
+
+
+        <div class="mb-3">
+          <label class="form-label">Prezime studenta</label>
+          <input class="form-control" [(ngModel)]="edit_student.prezime" placeholder="Prezime studenta"/>
+        </div>
+
+
+        <div class="mb-3">
+          <label class="form-label">Broj indeksa</label>
+          <input class="form-control" [(ngModel)]="edit_student.broj_indeksa" placeholder="Broj indeksa"/>
+        </div>
+
+
+        <div class="mb-3">
+          <label class="form-label">Datum rodjenja</label>
+          <input class="form-control" type="date" [(ngModel)]="edit_student.datum_rodjenja" placeholder="Datum rodjenja">
+        </div>
+
+
+        <div class="mb-3">
+          <label class="form-label">Opstina rodjenja</label>
+          <select class="form-control" [(ngModel)]="edit_student.opstina_rodjenja_id">
+            <option *ngFor="let x of opstine" [value]="x.id" >{{x.opis}}</option>
+          </select>
+        </div>
+
+
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="edit_student = null" >Close</button>
+        <button type="button" class="btn btn-primary" (click)="EditujStudenta()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
